@@ -32,12 +32,15 @@
         tail (drop-while pred coll)]
     (reverse (conj (reverse head) (first tail)))))
 
+(defn extraire-rime
+  [phrase]
+  (-> phrase
+      phonetisation
+      reverse
+      ((partial take-until (complement voyelle?)))))
+
 (defn riment?
   "Prédicat selon que deux phrases riment ou non."
   [phrase1 phrase2]
-  (let [[r1 r2] (map (comp
-                      (partial take-until (complement voyelle?))
-                      reverse
-                      phonetisation)
-                     [phrase1 phrase2])]
+  (let [[r1 r2] (map extraire-rime [phrase1 phrase2])]
     (= r1 r2)))

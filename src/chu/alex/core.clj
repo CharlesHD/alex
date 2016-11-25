@@ -1,15 +1,17 @@
 (ns chu.alex.core
   (:require [chu.alex
              [extract :refer [extraire-vers]]
-             [phonetique :refer [riment?]]]
-            [clojure.string :refer [join]]))
+             [phonetique :refer [extraire-rime riment?]]]
+            [clojure.string :refer [join]]
+            [taoensso.tufte :refer [defnp p profile]]))
+
+(def *alexandrins* (atom []))
+(def *gdr* (atom {}))
 
 (defn-
   graphe-de-rimes
   [vers]
-  (let [add-vers
-        (fn [m v] (assoc m v (filter #(riment? % v) vers)))]
-  (reduce add-vers {} vers)))
+  (group-by extraire-rime vers))
 
 (defn- vec-or
   [vec]
@@ -24,20 +26,24 @@
       v
       (recur (rand-nth vers)))))
 
-(defn sonnet
+(defn charger-texte
   [texte]
-  (let [alexandrins (extraire-vers texte 12)
-        gdr (graphe-de-rimes alexandrins)
-        puv (partial pioche-un-vers alexandrins gdr)
-        a (puv [] 4)
+  (reset! *alexandrins* (extraire-vers texte 12))
+  (reset! *gdr* (graphe-de-rimes (deref *alexandrins*))))
+
+(defnp sonnet
+  []
+  (let [alexandrins (p :extract (deref *alexandrins*))
+        gdr (p :gdr (deref *gdr*))
+        gdr (reduce-kv #(if (>= (count %3) 4) (assoc %1 %2 %3) %1) {} gdr)
+        [a b c d e] (take 5 (shuffle (keys gdr)))
         [a1 a2 a3 a4] (take 4 (shuffle (get gdr a)))
-        b (puv [a] 4)
         [b1 b2 b3 b4] (take 4 (shuffle (get gdr b)))
-        c (puv [a b] 2)
         [c1 c2] (take 2 (shuffle (get gdr c)))
-        d (puv [a b c] 2)
         [d1 d2] (take 2 (shuffle (get gdr d)))
-        e (puv [a b c d] 2)
         [e1 e2] (take 2 (shuffle (get gdr e)))]
-    (join )
-    ))
+    (join "\n\n"
+          [(join "\n" [a1 b1 b2 a2])
+           (join "\n" [a3 b3 b4 a4])
+           (join "\n" [c1 c2 d1])
+           (join "\n" [e1 e2 d2])])))
