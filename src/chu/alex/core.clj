@@ -8,6 +8,11 @@
 (def *alexandrins* (atom []))
 (def *gdr* (atom {}))
 
+(defn reset-state
+  []
+  (reset! *alexandrins* [])
+  (reset! *gdr* {}))
+
 (defn-
   graphe-de-rimes
   [vers]
@@ -31,7 +36,7 @@
   (reset! *alexandrins* (extraire-vers texte 12))
   (reset! *gdr* (graphe-de-rimes (deref *alexandrins*))))
 
-(defn ajouter-texe
+(defn ajouter-texte
   [texte]
   (swap! *alexandrins* concat (extraire-vers texte 12)))
 

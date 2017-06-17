@@ -2,10 +2,16 @@
   (:require [clojure.java.shell :as shell]
             [clojure.string :refer [split]]))
 
+(def phonetics-path (atom "./phonetics"))
+
+(defn set-phonetic-path
+  [path]
+  (reset! phonetics-path path))
+
 (defn phonetisation
   "Transforme une phrase en une suite de phonèmes."
   [phrase]
-  (-> (shell/sh "./phonetics" (str phrase "\n"))
+  (-> (shell/sh @phonetics-path (str phrase "\n"))
       :out
       (split #" ")
       rest

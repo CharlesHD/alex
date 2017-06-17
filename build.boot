@@ -7,5 +7,5 @@
 
 (task-options!
  pom {:project 'alex
-      :version "0.0.4"}
+      :version "0.0.5"}
  jar {:manifest {"Foo" "bar"}})
