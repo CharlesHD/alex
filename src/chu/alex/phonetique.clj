@@ -1,10 +1,11 @@
 (ns chu.alex.phonetique
-  (:require [clojure.string :refer [split]]))
+  (:require [clojure.java.shell :as shell]
+            [clojure.string :refer [split]]))
 
 (defn phonetisation
   "Transforme une phrase en une suite de phonèmes."
   [phrase]
-  (-> (clojure.java.shell/sh "./phonetics" (str phrase "\n"))
+  (-> (shell/sh "./phonetics" (str phrase "\n"))
       :out
       (split #" ")
       rest

@@ -31,6 +31,14 @@
   (reset! *alexandrins* (extraire-vers texte 12))
   (reset! *gdr* (graphe-de-rimes (deref *alexandrins*))))
 
+(defn ajouter-texe
+  [texte]
+  (swap! *alexandrins* concat (extraire-vers texte 12)))
+
+(defn construire-gdr
+  []
+  (reset! *gdr* (graphe-de-rimes (deref *alexandrins*))))
+
 (defnp sonnet
   []
   (let [alexandrins (p :extract (deref *alexandrins*))
